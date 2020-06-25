@@ -1,0 +1,22 @@
+.ui.cards {
+  margin-top: 20px;
+}
+.ui.search.dropdown {
+}
+.ui.card,
+.ui.cards > .card {
+  background: rgb(31, 30, 116);
+  border-color: rgb(3, 3, 8);
+  box-shadow: 0 1px 3px 0 rgb(3, 3, 8), 0 0 0 1px rgb(3, 3, 85);
+  color: #fff;
+  width: 200px;
+}
+.ui.card > .content > .header:not(.ui),
+.ui.cards > .card > .content > .header:not(.ui) {
+  color: #fff;
+}
+.ui.card > .extra,
+.ui.cards > .card > .extra {
+  color: #fff;
+  border-top: 1px solid rgb(3, 3, 8) !important;
+}

@@ -1,5 +1,6 @@
 import React from "react"
 import { Card, Image, Dropdown } from "semantic-ui-react"
+import "../styles/home.css"
 import Sunny from "../assets/sunny.png"
 import ThunderStorm from "../assets/thunderstorm.png"
 import Cloudy from "../assets/cloudy.png"
@@ -24,29 +25,32 @@ export default (props) => {
   }
   return (
     <div>
-      <h3>Choose your State then City</h3>
-      <Dropdown
-        onChange={handleStatesChange}
-        placeholder="Choose a State"
-        search
-        selection
-        options={states.map((item) => ({
-          key: item,
-          text: item,
-          value: item,
-        }))}
-      />
-      <Dropdown
-        onChange={handleCitiesChange}
-        placeholder="Choose a City"
-        search
-        selection
-        options={cities.map((item) => ({
-          key: item,
-          text: item,
-          value: item,
-        }))}
-      />
+      <h3 style={{ textAlign: "center" }}>GetWeather Now</h3>
+      <div>
+        <Dropdown
+          onChange={handleStatesChange}
+          placeholder="Choose a State"
+          search
+          selection
+          options={states.map((item) => ({
+            key: item,
+            text: item,
+            value: item,
+          }))}
+        />
+        <Dropdown
+          style={{ float: "right" }}
+          onChange={handleCitiesChange}
+          placeholder="Choose a City"
+          search
+          selection
+          options={cities.map((item) => ({
+            key: item,
+            text: item,
+            value: item,
+          }))}
+        />
+      </div>
       <Card.Group>
         {weather5days.map((day) => (
           <Card key={`dayOfWeek-${day.day}`}>

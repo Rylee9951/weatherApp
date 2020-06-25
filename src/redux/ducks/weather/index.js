@@ -43,7 +43,7 @@ function getTheCities(state) {
   return (dispatch) => {
     let cities = Usa.filter((item) => item.state === state)
     let finalCities = cities.map((item) => item.city).sort()
-    console.log(finalCities)
+
     dispatch({
       type: GET_CITIES,
       payload: finalCities,
