@@ -2,16 +2,19 @@ import axios from "axios"
 import { useSelector, useDispatch } from "react-redux"
 import { useEffect } from "react"
 import Usa from "../../../components/cities.json"
+import shortid from "shortid"
 
 //action names
 const GET_WEATHER = "weather/GET_WEATHER"
 const GET_STATES = "weather/GET_STATES"
 const GET_CITIES = "weather/GET_CITIES"
+const GET_TODAYS_WEATHER = "weather/GET_TODAYS_WEATHER"
 //reducer
 const initialState = {
   states: [],
   cities: [],
   weather: [],
+  today: {},
 }
 
 export default function (state = initialState, action) {
@@ -22,6 +25,8 @@ export default function (state = initialState, action) {
       return { ...state, cities: action.payload }
     case GET_WEATHER:
       return { ...state, weather: action.payload }
+    case GET_TODAYS_WEATHER:
+      return { ...state, today: action.payload }
     default:
       return state
   }
@@ -51,6 +56,49 @@ function getTheCities(state) {
   }
 }
 const apiKey = "17206ea6a26761548da827869b4b3237"
+
+function getTodaysWeather(city) {
+  let newCity = city.toLowerCase()
+  return (dispatch) => {
+    axios
+      .get(
+        `http://api.openweathermap.org/data/2.5/weather?q=${newCity}&appid=${apiKey}`
+      )
+      .then((resp) => {
+        const data = resp.data
+        //grabbing the data I want
+        let minTemp = data.main.temp_min
+        let maxTemp = data.main.temp_max
+        let weather = data.main.main
+        let temp = data.main.temp
+        let feelsLike = data.main.feels_like
+        let humidity = data.main.humidity
+        let windSpeed = data.wind.speed
+        //converting from Kelvin to  Fahrenheit and wind speed from meter/sec to mile/hour
+        let minTempF = Math.round(((minTemp - 273.15) * 9) / 5 + 32)
+        let maxTempF = Math.round(((maxTemp - 273.15) * 9) / 5 + 32)
+        let tempF = Math.round(((temp - 273.15) * 9) / 5 + 32)
+        let feelsLikeF = Math.round(((feelsLike - 273.15) * 9) / 5 + 32)
+
+        let windSpeedMH = Math.round(windSpeed * 2.237)
+
+        const today = {
+          minTempF,
+          maxTempF,
+          tempF,
+          feelsLikeF,
+          weather,
+          humidity,
+          windSpeedMH,
+        }
+        dispatch({
+          type: GET_TODAYS_WEATHER,
+          payload: today,
+        })
+      })
+  }
+}
+
 function get5DayWeatherNow(city) {
   let newCity = city.toLowerCase()
   return (dispatch) => {
@@ -155,7 +203,7 @@ function get5DayWeatherNow(city) {
                 : day5maxAvgF,
           }
         })
-
+        console.log(days)
         dispatch({
           type: GET_WEATHER,
           payload: days,
@@ -169,13 +217,23 @@ export function useWeather() {
   const dispatch = useDispatch()
   const states = useSelector(({ weatherReducer }) => weatherReducer.states)
   const cities = useSelector(({ weatherReducer }) => weatherReducer.cities)
+  const today = useSelector(({ weatherReducer }) => weatherReducer.today)
   const weather5days = useSelector(
     ({ weatherReducer }) => weatherReducer.weather
   )
   const getCities = (state) => dispatch(getTheCities(state))
+  const getToday = (city) => dispatch(getTodaysWeather(city))
   const get5DayWeather = (city) => dispatch(get5DayWeatherNow(city))
   useEffect(() => {
     dispatch(getStates())
   }, [dispatch])
-  return { states, getCities, cities, get5DayWeather, weather5days }
+  return {
+    states,
+    getCities,
+    cities,
+    get5DayWeather,
+    weather5days,
+    today,
+    getToday,
+  }
 }
